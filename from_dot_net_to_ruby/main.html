@@ -1,0 +1,96 @@
+<html lang="en">
+  <head>
+  <link rel="stylesheet" href="vendor/bower/reveal-js/css/reveal.css">
+  <link rel="stylesheet" href="vendor/bower/reveal-js/css/theme/solarized.css" id="theme">
+  </head>
+  <body>
+    <div class="reveal">
+        <div class="slides">
+            <section>
+              <h2>Moving from .NET to Ruby</h2>
+              <p>A set of opinions with which you might disagree</p>
+              <p>Sean Kelly</p>
+              <p>@StabbyCutyou <img src="img/twitter.png" height="50px;" width="50px;" style="border:0; box-shadow:0 0 0 0;"></a>
+            </section>
+            <section>
+              <h2>Before coming to Ruby...</h2>
+              <p class="fragment fade-in visible">This one might be the most divisive</p>
+            </section>
+            <section>
+               <h2>The (not so) poignent guide to Ruby</h2>
+               <p class="fragment fade-in visible">I wanted to learn Ruby, not the depths to which madness can drive a person</p>
+               <p class="fragment fade-in visible">But it probably wasn't aimed at me, either</p>
+            </section>
+            <section>
+              <h2>Once I started writing Ruby...</h2>
+              <p class="fragment fade-in visible">Ready your eye-rolls</p>
+            </section>
+            <section>
+              <h2>No Interfaces</h2>
+              <p class="fragment fade-in visible">My life in .NET was nothing but interfaces</p>
+              <p class="fragment fade-in visible">Testing was especially impossible without them</p>
+              <p class="fragment fade-in visible">"But how do I KNOW the method is available to be called?!"</p>
+            </section>
+            <section>
+              <h2>No privacy, no hiding anything</h2>
+              <p class="fragment fade-in visible">Someone made something private? Nice Try - #send</p>
+              <p class="fragment fade-in visible">"Private" instance variable? Think again - #instance_variable_get/set</p>
+            </section>
+            <section>
+              <h2>Meta Magic</h2>
+              <p class="fragment fade-in visible">Nothing is ever as it seems</p>
+              <p class="fragment fade-in visible">Think you're calling a method? Nope - Aliasing!</p>
+              <p class="fragment fade-in visible">Going to lookup a method definition? Try again - Dynamically created at run time!</p>
+              <p class="fragment fade-in visible">Think you can only call methods that were actually defined in some way? Swing and miss - Method Missing!<p>
+            </section>
+            <section>
+              <h2>Prerequisite whining about things in Rails</h2>
+              <p class="fragment fade-in visible">No set of complaints is complete without it</p>
+            </section>
+            <section>
+              <h2>No "Service" pattern for business logic</h2>
+              <p class="fragment fade-in visible">Fat Controllers is bad design</p>
+              <p class="fragment fade-in visible">Fat Models are ALSO bad design</p>
+              <p class="fragment fade-in visible">Keeping business logic in "Service" objects does not make you "too enterprisey"</p>
+            </section>
+            <section>
+              <h2>Active Record Models</h2>
+              <p class="fragment fade-in visible">What properties does this model have?</p>
+              <p class="fragment fade-in visible">Don't bother trying to read the model itself</p>
+            </section>
+            <section>
+              <h2>No real support for custom SQL reports</h2>
+              <p class="fragment fade-in visible">Yes, you can execute arbitrary SQL</p>
+              <p class="fragment fade-in visible">Yes, you can use AREL to build queries</p>
+              <p class="fragment fade-in visible">But being able to hand-write reports where it matters easily is important</p>
+              <p class="fragment fade-in visible">And AREL is no better than any other SQL building DSL. They're all subpar compared to the real thing</p>
+            </section>
+            <section>
+              <h2>But, it wasn't all bad</h2>
+              <p class="fragment fade-in visible">I don't have to worry as much about types</p>
+              <p class="fragment fade-in visible">
+            </section>
+            <section>
+              <h2>I actually love a lot of this stuff now</h2>
+              <p class="fragment fade-in visible">It just took some getting used to programming without a net</p>
+            </section>
+            <section>
+              <h2>Meta Magic is great, when used with care</h2>
+              <p class="fragment fade-in visible">If I had to write a DSL, I'd choose ruby</p>
+            </section>
+            <section>
+              <h2>Just because Rails doesn't, doesn't mean I can't</h2>
+              <p class="fragment fade-in visible">I use app/services and you can't stop me<p>
+              <p class="fragment fade-in visible">And Rails is pretty good for most things in general<p>
+            </section>
+            <section>
+              <h2>I still don't care for ActiveRecord</h2>
+              <p class="fragment fade-in visible">But, it's ubiquitous and works fine ~80% of the time</p>
+              <p class="fragment fade-in visible">I can brute force my way around most of the parts I disagree with if I have to</p>
+            </section>
+        </div>
+    </div>
+    <script src="vendor/bower/reveal-js/js/reveal.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>
