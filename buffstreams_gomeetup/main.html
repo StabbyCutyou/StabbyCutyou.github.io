@@ -1,0 +1,334 @@
+<html lang="en">
+  <head>
+  <link rel="stylesheet" href="vendor/bower/reveal-js/css/reveal.css">
+  <link rel="stylesheet" href="vendor/bower/reveal-js/css/theme/solarized.css" id="theme">
+  <link rel="stylesheet" href="vendor/bower/reveal-js/css/theme/styleChanges.css" id="theme-additions">
+  </head>
+  <body>
+    <div class="reveal">
+        <div class="slides">
+            <section>
+              <h2>Protocol Buffers, TCP, and Golang</h2>
+              <p>A Recipe for "Fun"</p>
+              <p>Sean Kelly</p>
+              <p>@StabbyCutyou <img src="img/twitter.png" id="twitterIcon"></a>
+            </section>
+            <section>
+              <h2>Who am I?</h2>
+              <p class="fragment fade-in visible">I work for Tapjoy</p>
+              <p class="fragment fade-in visible">I am a core mainter of...</p>
+              <p class="fragment fade-in visible">Chore : Tapjoys Job System in Ruby<br/><a href="http://github.com/Tapjoy/chore">http://github.com/Tapjoy/chore</a></p>
+              <p class="fragment fade-in visible">Dynamiq : Tapjoys Queue / Topic System ontop of Riak in Golang<br/><a href="http://github.com/Tapjoy/dynamiq">http://github.com/Tapjoy/dynamiq</a></p>
+              <p class="fragment fade-in visible">Buffstreams : Streaming Protocol Buffers over TCP made easy in Golang<br/><a href="http://github.com/StabbyCutyou/buffstreams">http://github.com/StabbyCutyou/buffstreams</a></p>
+              <p class="fragment fade-in visible">And a bunch of other libraries of dubious value!</p>
+            </section>
+            <section>
+              <h2>What am I here to blather on about?</h2>
+              <h3>Literally the BEST stuff ever:</h3>
+              <p class="fragment fade-in visible">Binary packed data formats!</p>
+              <p class="fragment fade-in visible">Network communication protocols!</p>
+              <p class="fragment fade-in visible">Streaming bytes!</p>
+              <p class="fragment fade-in visible">Edge cases!</p>
+            </section>
+            <section>
+              <h2>Why I care about this stuff</h2>
+              <p class="fragment fade-in visible">I had an idea for a project</p>
+              <p class="fragment fade-in visible">It involved using TCP to stream data between servers</p>
+              <p class="fragment fade-in visible">Nothing in Go handled my needs "out of the box"</p>
+              <p class="fragment fade-in visible">But there were enough pieces to build my own solution</p>
+              <p class="fragment fade-in visible">... With no shortage of trial and error</p>
+            </section>
+            <section>
+              <h2>Binary Packed Data Formats</h2>
+              <p class="fragment fade-in visible">Protocol Buffers*</p>
+              <p class="fragment fade-in visible">AVRO</p>
+              <p class="fragment fade-in visible">Thrift</p>
+              <p class="fragment fade-in visible">BSON</p>
+              <p class="fragment fade-in visible">Message Pack</p>
+              <p class="fragment fade-in visible">Probably some others</p>
+            </section>
+            <section>
+              <h2>Protocol Buffers</h2>
+              <p class="fragment fade-in visible">Protobuffs for short</p>
+              <p class="fragment fade-in visible">Uses an Interface Definition Language (IDL) to describe data</p>
+              <p class="fragment fade-in visible">Very efficient to serialize / deserialize</p>
+              <p class="fragment fade-in visible">Data is represented as a very tightly packed sequence of raw bytes</p>
+            </section>
+            <section>
+              <h2>Protobuffs IDL</h2>
+              <p class="fragment fade-in visible">Most languages have libraries that generate classes based on the IDL</p>
+              <p class="fragment fade-in visible">Supports a range of types:</p>
+              <ul class="fragment fade-in visible">
+                <li>String</li>
+                <li>Bool</li>
+                <li>Bytes</li>
+                <li>Float</li>
+                <li>Double</li>
+                <li>10 Different Ints</li>
+                <li>Enumerations</li>
+                <li>Custom Types</li>
+              </ul>
+            </section>
+            <section>
+              <h2>Sample Protobuffs IDL</h2>
+              <pre><code>
+                package message;
+
+                message Note    {
+                  required string name = 1;
+                  required int64 date = 2;
+                  required string comment = 3;
+                }
+              </code></pre>
+            </section>
+            <section>
+              <h2>Sample Protobuffs Struct</h2>
+              <pre><code>
+package message
+
+import proto "github.com/golang/protobuf/proto"
+import math "math"
+
+// Reference imports to suppress errors if they are not otherwise used.
+var _ = proto.Marshal
+var _ = math.Inf
+
+type Note struct {
+	Name             *string `protobuf:"bytes,1,req,name=name" json:"name,omitempty"`
+	Date             *int64  `protobuf:"varint,2,req,name=date" json:"date,omitempty"`
+	Comment          *string `protobuf:"bytes,3,req,name=comment" json:"comment,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
+}
+
+func (m *Note) Reset()         { *m = Note{} }
+func (m *Note) String() string { return proto.CompactTextString(m) }
+func (*Note) ProtoMessage()    {}
+
+// Various Getters go here
+
+func init() {
+}
+
+              </code></pre>
+            </section>
+            <section>
+              <h2>Why use Protocol Buffers?</h2>
+              <h3>(or something like it)</h3>
+              <p class="fragment fade-in visible">JSON is too slow or too large to use at scale</p>
+              <p class="fragment fade-in visible">You want some notion of type-enforcement</p>
+              <p class="fragment fade-in visible">Want to maintain a backwards-compatible serialization schema</p>
+              <p class="fragment fade-in visible">A service or technology you want to use also uses it</p>
+            </section>
+            <section>
+              <h2>Protobuffs Gotchas</h2>
+              <p class="fragment fade-in visible">Can never remove fields, only deprecate old ones and add new ones</p>
+              <p class="fragment fade-in visible">In Golang, the protobuffs code gen DOES NOT PASS LINT</p>
+              <p class="fragment fade-in visible">The serialized message lacks a beginning / end demarcation*</p>
+            </section>
+            <section>
+              <h2>TCP</h2>
+              <p class="fragment fade-in visible">Stands for Transmission Control Protocol</p>
+              <p class="fragment fade-in visible">Over-achieving brother to the User Datagram Protocol (UDP)</p>
+              <p class="fragment fade-in visible">Relies on handshakes, repeated acknowledgement of packets</a>
+              <p class="fragment fade-in visible">Trades performance for reliable, ordered delivery</p>
+            </section>
+            <section>
+              <h2>TCP Connections</h2>
+              <p class="fragment fade-in visible">Opening connections is a (relatively) slow, expensive operation</p>
+              <p class="fragment fade-in visible">Maintaining open, idle connections is almost free in comparison</p>
+              <p class="fragment fade-in visible">"Closed" connections remain for short periods, awaiting any final packets</p>
+              <p class="fragment fade-in visible">Have a lifecycle of different states</p>
+            </section>
+            <section>
+              <h2>TCP "Simple"</h2>
+              <p class="fragment fade-in visible">Open a connection</p>
+              <p class="fragment fade-in visible">Write data</p>
+              <p class="fragment fade-in visible">Close the connection</p>
+            </section>
+            <section>
+              <h2>TCP Streaming</h2>
+              <p class="fragment fade-in visible">Open a connection, cache it for re-use</p>
+              <p class="fragment fade-in visible">Write data in a nearly-constant stream</p>
+              <p class="fragment fade-in visible">Close the connection when you're service exits</p>
+            </section>
+            <section>
+              <h2>TCP in Golang</h2>
+              <p class="fragment fade-in visible">Super easy to get going with, thanks to the net package</p>
+              <p class="fragment fade-in visible">TCPListener: Open a port, hand incoming connections to go-routines</p>
+              <p class="fragment fade-in visible">TCPConn: Read incoming bytes</p>
+              <p class="fragment fade-in visible">TCPConn: Write outgoing bytes</p>
+              <p class="fragment fade-in visible">Even easier to switch between various protocols thanks to net.Conn</p>
+            </section>
+            <section>
+              <h2>Sample TCP Server Code</h2>
+              <pre><code>
+// The for-loop in here will block the thread, so you want to run
+// this in something go-routined, or have it use one internally
+func startListening() error {
+  socket, err := net.Listen("tcp", ":5432"))
+  if err != nil {
+    return err
+  }
+  for {
+    // Block and wait for connections
+    conn, err := socket.Accept()
+    if err != nil {
+      // Connection failed before it even began - ignore and move on
+      // It should be up to the client to re-try a failed connection, not the server
+    } else {
+      // Here is where you'd handle listening on this connection
+      // Because you want to get back to accepting new connections ASAP,
+      // you'd run your handling code in it's own go-routine as well
+      go handleConn(conn)
+    }
+  }
+}
+              </code></pre>
+            </section>
+            <section>
+              <h2>TCP / Golang Gotchas</h2>
+              <p class="fragment fade-in visible">net package has a custom Error - which includes a "Temporary()" helper</p>
+              <p class="fragment fade-in visible">Connections - What to do when the client / server abruptly closes the connection?</p>
+              <p class="fragment fade-in visible">... And handling each place where it could happen</a>
+              <p class="fragment fade-in visible">TCP Behavior - You can tune how the OS handles tcp, but there are tradeoffs</p>
+            </section>
+            <section>
+              <h2>EOF</h2>
+              <p class="fragment fade-in visible">How will EOFs manifest?</p>
+              <p class="fragment fade-in visible">Will you get a read of 0 bytes + EOF?</p>
+              <p class="fragment fade-in visible">Will you get a read of X final bytes + EOF?</p>
+              <p class="fragment fade-in visible">The answer...</p>
+              <p class="fragment fade-in visible">... Both! Both cases are normal in Golang!</p>
+            </section>
+            <section>
+              <h2>Backpressue</h2>
+              <p class="fragment fade-in visible">How does TCP tell you to calm down?</p>
+              <p class="fragment fade-in visible">Suddenly, your writes only partially complete</p>
+              <p class="fragment fade-in visible">TCPConn returns # of bytes written for a reason</p>
+              <p class="fragment fade-in visible">Solution: Check bytes written, continue to write until finished</p>
+              <p class="fragment fade-in visible">"It's all fun and games until someone saturates the NIC"</p>
+            </section>
+            <section>
+              <h2>Streaming and Protobuffs Gotchas</h2>
+              <p class="fragment fade-in visible">Remember how protobuff messages lack demarcation?</p>
+              <p class="fragment fade-in visible">Solution 1: Use a custom delimeter to demarcate where things begin / end</p>
+              <p class="fragment fade-in visible">... But you have to ensure no one puts that delimeter into a message body</p>
+              <p class="fragment fade-in visible">Solution 2: Prepend a message header of X bytes to describe the playload</p>
+              <p class="fragment fade-in visible">... But you are now limited to messages big enough to be described in X bytes</p>
+              <p class="fragment fade-in visible">Those are your tradeoffs - pick one and understand the implications</p>
+            </section>
+            <section>
+              <h2>Wrapping Up</h2>
+              <p class="fragment fade-in visible">Protocol Buffers are a fast, efficient way to serialize data</p>
+              <p class="fragment fade-in visible">... So long as you're ok with an IDL, pre-compile steps, and un-lintable code</p>
+              <p class="fragment fade-in visible">TCP in Golang is really easy to get going with</p>
+              <p class="fragment fade-in visible">... But you need to know your edge cases</p>
+              <p class="fragment fade-in visible">Using the two together is a great way to communicate between apps</p>
+              <p class="fragment fade-in visible">... But it requires a good amount of boilerplate and forethought to work smoothly</p>
+            </section>
+            <section>
+              <h2>BuffStreams - Streaming TCP abstraction, designed for Protobuffs</h2>
+              <p class="fragment fade-in visible">I kept re-writing the same code</p>
+              <p class="fragment fade-in visible">But I wasn't happy with the design</p>
+              <p class="fragment fade-in visible">Nor having to copy and paste changes between projects</p>
+              <p class="fragment fade-in visible">So, I created BuffStreams</p>
+              <p class="fragment fade-in visible">... I almost called it BeamDog</p>
+            </section>
+            <section>
+              <h2>Design</h2>
+              <p class="fragment fade-in visible">There is nothing magical in BuffStreams</p>
+              <p class="fragment fade-in visible">It is not a "better" TCP socket</p>
+              <p class="fragment fade-in visible">It handles the boilerplate and edgecases</p>
+              <p class="fragment fade-in visible">It does not internally rely on Protocol Buffers</p>
+            </section>
+            <section>
+              <h2>How does it handle Streaming?</h2>
+              <p class="fragment fade-in visible">BuffStreams uses "Solution 2" : Prepended message sizes</p>
+              <p class="fragment fade-in visible">Configure per-listener and per-writer max message size</p>
+              <p class="fragment fade-in visible">It allocates the # of bytes needed to represent max message size</p>
+              <p class="fragment fade-in visible">It automatically adds the size to outgoing messages</p>
+              <p class="fragment fade-in visible">It strips the size from the message prior to invoking the Callback</p>
+            </section>
+            <section>
+              <h2>How it works in an application</h2>
+              <p class="fragment fade-in visible">You define a callback for handling incoming messages</p>
+              <p class="fragment fade-in visible">You start a TCPListener</p>
+              <p class="fragment fade-in visible">You pass in that callback</p>
+              <p class="fragment fade-in visible">That callback is given a whole set of message bytes, minus the header, for you to deserialize as you see fit</p>
+            </section>
+            <section>
+              <h2>Optimizing performance</h2>
+              <p class="fragment fade-in visible">Avoid all interfaces</p>
+              <p class="fragment fade-in visible">Avoid any locking internally</p>
+              <p class="fragment fade-in visible">Avoid unnecessary allocations</p>
+              <p class="fragment fade-in visible">Avoid unnecessary state management</p>
+              <p class="fragment fade-in visible">Avoid channels</p>
+            </section>
+            <section>
+              <h2>Buffers, Slices, and avoiding allocations</h2>
+              <p class="fragment fade-in visible">Allocate a buffer for incoming messages once per connection</p>
+              <p class="fragment fade-in visible">Re-use that buffer for each read</p>
+              <p class="fragment fade-in visible">Use the number of bytes read to get a slice with the data</p>
+              <p class="fragment fade-in visible">Next message starts from 0, overwrites the old buffer data</p>
+              <p class="fragment fade-in visible">Never use the whole buffer, only [0:bytesRead]</p>
+            </section>
+            <section>
+              <h2>Sample Code</h2>
+              <pre><code>
+headerBuffer := make([]byte, headerByteSize)
+for {
+  var headerReadError error
+  var totalHeaderBytesRead = 0
+  var bytesRead = 0
+  // First, read the number of bytes required to determine the message length
+  for totalHeaderBytesRead < headerByteSize && headerReadError == nil {
+    // While we haven't read enough yet
+    // pass in the slice that represents where we are in the buffer overall
+    bytesRead, headerReadError = conn.Read(headerBuffer[totalHeaderBytesRead:])
+    // Handle any errors that might happen - usually EOFs, which you can ignore until
+    // after you account for the bytes read.
+    ...
+    // Account for the bytes we read
+    totalHeaderBytesRead += bytesRead
+  }
+  // Handle the above error if possible
+  ...
+  // You've got the header bytes, use them to get the full message body, like we did the header
+  ...
+  // End of loop, read and processed a full message, get the next one from the connection
+}
+              </code></pre>
+            </section>
+            <section>
+              <h2>BuffStreams Gotchas</h2>
+              <p class="fragment fade-in visible">The most important "gotcha": It's fairly untested in production!</p>
+              <p class="fragment fade-in visible">Because you must specify a max message size, it's not good for messages of un-knowable size limitations</p>
+              <p class="fragment fade-in visible">It doesn't handle serialization by design, this is up to you</p>
+              <p class="fragment fade-in visible">Currently, it drops failed message callbacks on the floor</p>
+              <p class="fragment fade-in visible">... So your callback needs to handle error cases for you</p>
+              <p class="fragment fade-in visible">... You can choose to log errors as well</p>
+              <p class="fragment fade-in visible">It's up to you to manage the TCPListeners and Writers you use</p>
+              <p class="fragment fade-in visible">... Although there is a simple Manager that will make this easier, with a performance hit</p>
+            </section>
+            <section>
+              <h2>In Conclusion</h2>
+              <p class="fragment fade-in visible">Golang makes writing networking code fairly simple</p>
+              <p class="fragment fade-in visible">Protobuffs are good if want an efficient format for serialization</p>
+              <p class="fragment fade-in visible">Slices are great, get creative with them</p>
+              <p class="fragment fade-in visible">Buffstreams aims to do all of the "boring" parts of streaming protobuffs over TCP</p>
+            </section>
+            <section>
+              <h2>Thanks!</h2>
+              <h3>Questions?</h3>
+              <p>Protocol Buffers, TCP, and Golang</p>
+              <p>A Recipe for "Fun"</p>
+              <p>Sean Kelly</p>
+              <p>@StabbyCutyou <img src="img/twitter.png" id="twitterIcon"></a>
+            </section>
+        </div>
+      </div>
+    </div>
+    <script src="vendor/bower/reveal-js/js/reveal.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>
