@@ -30,23 +30,13 @@
             <p class="fragment fade-in visible">When NOT to use them?</p>
           </section>
           <section>
-            <h2>If you've with Pointers in other languages before...</h2>
+            <h2>If you've used Pointers in other languages before...</h2>
             <p class="fragment fade-in visible">Some of this might bore you</p>
             <p class="fragment fade-in visible">I don't have any ground breaking revelations about Pointers</p>
             <p class="fragment fade-in visible">This talk is to introduce the basics in Go</p>
             <p class="fragment fade-in visible">However, since this is all anyone cares about anyways...</p>
             <p class="fragment fade-in visible">My opinion is to use Pointer receivers on your methods by default</p>
             <p class="fragment fade-in visible">Have a safe trip home!</p>
-          </section>
-          <section>
-            <h2>Definitions</h2>
-            <p class="fragment fade-in visible">Pointer: Stores the address in memory of another variable</p>
-            <p class="fragment fade-in visible">Reference: Refers to another variable</p>
-            <p class="fragment fade-in visible">... Wait, what? What's the difference?</p>
-            <p class="fragment fade-in visible">... A very subtle one:</p>
-            <p class="fragment fade-in visible">Pointers can be re-assigned to another address in memory</p>
-            <p class="fragment fade-in visible">References cannot. They always refer only to that variable</p>
-            <p class="fragment fade-in visible">For a more detailed set of examples, see: http://spf13.com/post/go-pointers-vs-references/</p>
           </section>
           <section>
             <h2>What are Pointers?</h2>
@@ -57,6 +47,14 @@
             <p class="fragment fade-in visible">But each one of these things, is a little different</p>
           </section>
           <section>
+            <h2>Declaring Pointers : Incorrectly</h2>
+            <iframe src="https://play.golang.org/p/ilR__fkrqH" frameborder="0" style="width: 100%; height: 100%"><a href="https://play.golang.org/p/ilR__fkrqH">see this code in play.golang.org</a></iframe>
+          </section>
+          <section>
+            <h2>Declaring Pointers : Correctly</h2>
+            <iframe src="https://play.golang.org/p/CtNrpdruaf" frameborder="0" style="width: 100%; height: 100%"><a href="https://play.golang.org/p/CtNrpdruaf">see this code in play.golang.org</a></iframe>
+          </section>
+          <section>
             <h2>Zero Values</h2>
             <iframe src="https://play.golang.org/p/hAWj-OsRJL" frameborder="0" style="width: 100%; height: 100%"><a href="https://play.golang.org/p/hAWj-OsRJL">see this code in play.golang.org</a></iframe>
           </section>
@@ -64,41 +62,33 @@
             <h2>Passing Pointers</h2>
             <p class="fragment fade-in visible">Structs are passed as values</p>
             <p class="fragment fade-in visible">Everyone gets their own copy of the value in memory</p>
-            <p class="fragment fade-in visible">Pointers by reference</p>
+            <p class="fragment fade-in visible">Pointers act as references*</p>
             <p class="fragment fade-in visible">Everyone shares a reference back to the same place in memory</p>
             <p class="fragment fade-in visible">Remember: If the value inside the Pointer isn't threadsafe, you need to protect it!</p>
           </section>
           <section>
             <h2>Hauling Garbage</h2>
+            <p class="fragment fade-in visible">Golang uses a 3-color, Mark and Sweep GC. Once something cannot be "colored", it's considered out of scope</p>
             <p class="fragment fade-in visible">Normally, variables are collected once they fall out of scope</p>
             <p class="fragment fade-in visible">Pointers can be shared over many scopes</p>
-            <p class="fragment fade-in visible">Golang uses a 3-color, Mark and Sweep GC. Once something cannot be "colored", it's considered out of scope</p>
             <p class="fragment fade-in visible">Pointers are only collected once they fall out of all scopes</p>
           </section>
           <section>
             <h2>Serializing</h2>
-            <p class="fragment fade-in visible">The most common mistake people make at first...</p>
-            <p class="fragment fade-in visible">If a field of JSON can be null, you <strong>must</stong> declare it as a pointer type</p>
+            <p class="fragment fade-in visible">The most common mistake people make when serializing (ex: JSON)</p>
+            <p class="fragment fade-in visible">If a field of JSON can be null, you <strong>must</strong> declare it as a pointer type</p>
             <p class="fragment fade-in visible">Additionally, you want to provide the <em>omitempty</em> struct tags</p>
             <p class="fragment fade-in visible">Otherwise, Golang will fill missing data in with a value-based Zero Value</p>
-            <p class="fragment fade-in visible">There are similar concerns at play in other Serializations as well, such as Pbuffs or SQL</p>
+            <p class="fragment fade-in visible">There are similar concerns at play in other Serializations as well (ex: SQL)</p>
           </section>
           <section>
             <h2>Making a Point</h2>
             <p class="fragment fade-in visible">Important Fact: Anything you can create with <em>make</em>, is already a Reference</p>
             <p class="fragment fade-in visible">... Even if you didn't use <em>make</em> to create it</a>
-              <pre  class="fragment fade-in visible"><code>
-                // Both of these are references to the underlying value
-                // regardless of how you created them
-                m := make(map[string]S)
-                var m map[string]S
-              </code></pre>
-              <pre  class="fragment fade-in visible"><code>
-                // You probably don't want to do this:
-                var m *map[string]S
-                // But this is perfectly fine
-                var m map[string]*S
-              </code></pre>
+          </section>
+          <section>
+            <h2>Making a Point</h2>
+            <iframe src="https://play.golang.org/p/s7mva95lnH" frameborder="0" style="width: 100%; height: 100%"><a href="https://play.golang.org/p/s7mva95lnH">see this code in play.golang.org</a></iframe>
           </section>
           <section>
             <h2>Interfacing</h2>
@@ -106,9 +96,9 @@
             <p class="fragment fade-in visible">Interfaces are actually 2 pieces of data working in tandem:</p>
             <p class="fragment fade-in visible">The first points to memory address holding the underlying type</p>
             <p class="fragment fade-in visible">The second points to the actual value in memory</p>
-            <p class="fragment fade-in visible">So, you never want to do this: `f := func(i *MyInterface){}`</p>
-            <p class="fragment fade-in visible">But, you can totally do this: `f(&S{})`</p>
-            <p class="fragment fade-in visible">That's because both S and *S adhere to the definition of MyInterface</p>
+            <p class="fragment fade-in visible">So, you never want to do this: <em>f := func(i *MyInterface){}</em></p>
+            <p class="fragment fade-in visible">But, you can totally do this: <em>f(&S{})</em></p>
+            <p class="fragment fade-in visible">That's because both <em>S</em> and <em>*S</em> adhere to the definition of MyInterface</p>
           </section>
           <section>
             <h2>Receiving</h2>
@@ -121,7 +111,7 @@
           <section>
             <h2>Aliasing Pointers</h2>
             <p class="fragment fade-in visible">Technically, you can declare a type as pointer of an existing type</p>
-            <p class="fragment fade-in visible">Example: <pre class="fragment fade-in visible"><code>type PointS *S</code></pre></p>
+            <p class="fragment fade-in visible">Example: <em>type PointS *S</em></p>
             <p class="fragment fade-in visible">Important note: With few exceptions, there is no type-aliasing in Golang. This is a brand new type</p>
             <p class="fragment fade-in visible">Should you declare types this way?</p>
             <p class="fragment fade-in visible">My <strong>opinion</strong> is probably not</p>
@@ -137,7 +127,7 @@
           <section>
             <h2>Pointing to Pointers</h2>
             <p class="fragment fade-in visible">This means passing around Pointers is actually copying the Pointer (but not the value it points to)</p>
-            <p class="fragment fade-in visible">A Pointer itself is actually a kind of value!</p>
+            <p class="fragment fade-in visible">A Pointer itself is actually a kind of (and passed by) value! (Remember my asterisk from before?)</p>
             <p class="fragment fade-in visible">Therefore, passing around a Pointer to a Pointer lets you swap in different pointers simply</p>
             <p class="fragment fade-in visible">This, like other shared state, is not thread safe</p>
           </section>
@@ -162,15 +152,8 @@
             <p class="fragment fade-in visible">Pointers can be used mostly like regular variables</p>
             <p class="fragment fade-in visible">Go ahead and declare those method receivers on Pointer</p>
             <p class="fragment fade-in visible">You don't want to use Interfaces as Pointers, but using them with Pointers is fine</p>
-            <p class="fragment fade-in visible">Serializing data? Remember pointers if fields can be null</p>
+            <p class="fragment fade-in visible">Serializing data? Remember your pointers if fields can be null</p>
             <p class="fragment fade-in visible">Pointers to Pointers are a little heady, but very important when needed</p>
-          </section>
-          <section>
-            <h2>Additional Reading</h2>
-            <p class="fragment fade-in visible">Dave Cheney:</p>
-            <p class="fragment fade-in visible">http://dave.cheney.net/2016/03/19/should-methods-be-declared-on-t-or-t</p>
-            <p class="fragment fade-in visible">Steve Francia (sp13):</p>
-            <p class="fragment fade-in visible">http://spf13.com/post/go-pointers-vs-references</p>
           </section>
           <section>
             <h2>Thanks!</h2>
@@ -179,6 +162,8 @@
             <p>Information, examples, and tips about Pointers in Golang</p>
             <p>Sean Kelly</p>
             <p>@StabbyCutyou <img src="img/twitter.png" id="twitterIcon"></a>
+            <p>Dave Cheney : http://dave.cheney.net/2016/03/19/should-methods-be-declared-on-t-or-t</p>
+            <p>Steve Francia (sp13): http://spf13.com/post/go-pointers-vs-references</p>
           </section>
         </div>
     </div>
