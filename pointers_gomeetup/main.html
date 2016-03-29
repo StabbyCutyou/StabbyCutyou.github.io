@@ -8,7 +8,7 @@
     <div class="reveal">
         <div class="slides">
           <section>
-            <h2>Whats the Point?</h2>
+            <h2>What's the Point?</h2>
             <p>Information, examples, and tips about Pointers in Golang</p>
             <p>Sean Kelly</p>
             <p>@StabbyCutyou <img src="img/twitter.png" id="twitterIcon"></a></p>
@@ -16,7 +16,7 @@
           <section>
             <h2>Who am I?</h2>
             <p class="fragment fade-in visible">I work for Tapjoy</p>
-            <p class="fragment fade-in visible">I am a core mainter of...</p>
+            <p class="fragment fade-in visible">I am a core mainter of:</p>
             <p class="fragment fade-in visible">Buffstreams : Streaming Protocol Buffers over TCP<br/><a href="http://github.com/StabbyCutyou/buffstreams">http://github.com/StabbyCutyou/buffstreams</a></p>
             <p class="fragment fade-in visible">Moldova : Randomized templated data<br/><a href="http://github.com/StabbyCutyou/moldova">http://github.com/StabbyCutyou/moldova</a></p>
             <p class="fragment fade-in visible">Chore : Tapjoys Job System in Ruby<br/><a href="http://github.com/Tapjoy/chore">http://github.com/Tapjoy/chore</a></p>
@@ -43,7 +43,7 @@
             <p class="fragment fade-in visible">You can use them like a variable to call methods or properties of a value</p>
             <p class="fragment fade-in visible">You can pass them to functions</p>
             <p class="fragment fade-in visible">They get garbage collected</p>
-            <p class="fragment fade-in visible">But each one of these things, is a little different</p>
+            <p class="fragment fade-in visible">But each one of these things is a little different</p>
           </section>
           <section>
             <h2>Zero Values</h2>
@@ -89,7 +89,7 @@
             <h2>Receiving Pointers</h2>
             <p class="fragment fade-in visible">Should I use a Pointer or a Value as a method receiver?</p>
             <p class="fragment fade-in visible">Pointers, in most cases</p>
-            <p class="fragment fade-in visible">Typically, you want to be using Pointers where possible anyways</p>
+            <p class="fragment fade-in visible">Typically, you want to be using Pointers where possible</p>
             <p class="fragment fade-in visible">Additionally, you want to watch out for "Accidental Copying" when not using Pointers</p>
           </section>
           <section>
@@ -105,7 +105,7 @@
           <section>
             <h2>Serializing</h2>
             <p class="fragment fade-in visible">The most common mistake people make when serializing (ex: JSON)</p>
-            <p class="fragment fade-in visible">If a field of JSON can be null, you <strong>must</strong> declare it as a Pointer type</p>
+            <p class="fragment fade-in visible">If a field can be null, you <strong>must</strong> declare it as a Pointer type</p>
             <p class="fragment fade-in visible">Otherwise, Golang will fill missing data in with a value-based Zero Value</p>
             <p class="fragment fade-in visible">There are similar concerns at play in other Serializations as well (ex: SQL)</p>
           </section>
@@ -116,7 +116,7 @@
             <p class="fragment fade-in visible">Important note: With few exceptions, there is no type-aliasing in Golang. This is a brand new type</p>
             <p class="fragment fade-in visible">Should you declare types this way?</p>
             <p class="fragment fade-in visible">My <strong>opinion</strong> is probably not</p>
-            <p class="fragment fade-in visible">Using Pointers isn't hard, declaring a type as a Pointer means more work to use it as a value, and is less clear to the reader</p>
+            <p class="fragment fade-in visible">Using Pointers isn't hard, declaring a type as a Pointer means more work to use it as a value and is less clear to the reader</p>
           </section>
           <section>
             <h2>Pointing to Pointers</h2>
@@ -160,7 +160,7 @@
           <section>
             <h2>Thanks!</h2>
             <h3>Questions?</h3>
-            <p>Whats the Point?</p>
+            <p>What's the Point?</p>
             <p>Information, examples, and tips about Pointers in Golang</p>
             <p>Sean Kelly</p>
             <p>@StabbyCutyou <img src="img/twitter.png" id="twitterIcon"></a>
