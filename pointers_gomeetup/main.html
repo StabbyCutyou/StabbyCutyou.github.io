@@ -17,17 +17,16 @@
             <h2>Who am I?</h2>
             <p class="fragment fade-in visible">I work for Tapjoy</p>
             <p class="fragment fade-in visible">I am a core mainter of...</p>
-            <p class="fragment fade-in visible">Buffstreams : Streaming Protocol Buffers over TCP made easy in Golang<br/><a href="http://github.com/StabbyCutyou/buffstreams">http://github.com/StabbyCutyou/buffstreams</a></p>
-            <p class="fragment fade-in visible">Moldova : Randomized templated data made easy<br/><a href="http://github.com/StabbyCutyou/moldova">http://github.com/StabbyCutyou/moldova</a></p>
+            <p class="fragment fade-in visible">Buffstreams : Streaming Protocol Buffers over TCP<br/><a href="http://github.com/StabbyCutyou/buffstreams">http://github.com/StabbyCutyou/buffstreams</a></p>
+            <p class="fragment fade-in visible">Moldova : Randomized templated data<br/><a href="http://github.com/StabbyCutyou/moldova">http://github.com/StabbyCutyou/moldova</a></p>
             <p class="fragment fade-in visible">Chore : Tapjoys Job System in Ruby<br/><a href="http://github.com/Tapjoy/chore">http://github.com/Tapjoy/chore</a></p>
-            <p class="fragment fade-in visible">Rapp : A scaffolding framework for non-web based Ruby apps<br/><a href="http://github.com/StabbyCutyou/rapp">http://github.com/StabbyCutyou/rapp</a></p>
           </section>
           <section>
             <h2>Pointers</h2>
             <p class="fragment fade-in visible">What are they?</p>
             <p class="fragment fade-in visible">What benefits do they have?</p>
             <p class="fragment fade-in visible">When to use them?</p>
-            <p class="fragment fade-in visible">When NOT to use them?</p>
+            <p class="fragment fade-in visible">When <em>not</em> to use them?</p>
           </section>
           <section>
             <h2>If you've used Pointers in other languages before...</h2>
@@ -47,16 +46,16 @@
             <p class="fragment fade-in visible">But each one of these things, is a little different</p>
           </section>
           <section>
+            <h2>Zero Values</h2>
+            <iframe src="https://play.golang.org/p/hAWj-OsRJL" frameborder="0" style="width: 100%; height: 100%"><a href="https://play.golang.org/p/hAWj-OsRJL">see this code in play.golang.org</a></iframe>
+          </section>
+          <section>
             <h2>Declaring Pointers : Incorrectly</h2>
-            <iframe src="https://play.golang.org/p/ilR__fkrqH" frameborder="0" style="width: 100%; height: 100%"><a href="https://play.golang.org/p/ilR__fkrqH">see this code in play.golang.org</a></iframe>
+            <iframe src="https://play.golang.org/p/okqRcnpduy" frameborder="0" style="width: 100%; height: 100%"><a href="https://play.golang.org/p/okqRcnpduy">see this code in play.golang.org</a></iframe>
           </section>
           <section>
             <h2>Declaring Pointers : Correctly</h2>
-            <iframe src="https://play.golang.org/p/CtNrpdruaf" frameborder="0" style="width: 100%; height: 100%"><a href="https://play.golang.org/p/CtNrpdruaf">see this code in play.golang.org</a></iframe>
-          </section>
-          <section>
-            <h2>Zero Values</h2>
-            <iframe src="https://play.golang.org/p/hAWj-OsRJL" frameborder="0" style="width: 100%; height: 100%"><a href="https://play.golang.org/p/hAWj-OsRJL">see this code in play.golang.org</a></iframe>
+            <iframe src="https://play.golang.org/p/w_KJ913ol4" frameborder="0" style="width: 100%; height: 100%"><a href="https://play.golang.org/p/w_KJ913ol4">see this code in play.golang.org</a></iframe>
           </section>
           <section>
             <h2>Passing Pointers</h2>
@@ -70,25 +69,28 @@
             <h2>Hauling Garbage</h2>
             <p class="fragment fade-in visible">Golang uses a 3-color, Mark and Sweep GC. Once something cannot be "colored", it's considered out of scope</p>
             <p class="fragment fade-in visible">Normally, variables are collected once they fall out of scope</p>
-            <p class="fragment fade-in visible">Pointers can be shared over many scopes</p>
-            <p class="fragment fade-in visible">Pointers are only collected once they fall out of all scopes</p>
-          </section>
-          <section>
-            <h2>Serializing</h2>
-            <p class="fragment fade-in visible">The most common mistake people make when serializing (ex: JSON)</p>
-            <p class="fragment fade-in visible">If a field of JSON can be null, you <strong>must</strong> declare it as a pointer type</p>
-            <p class="fragment fade-in visible">Additionally, you want to provide the <em>omitempty</em> struct tags</p>
-            <p class="fragment fade-in visible">Otherwise, Golang will fill missing data in with a value-based Zero Value</p>
-            <p class="fragment fade-in visible">There are similar concerns at play in other Serializations as well (ex: SQL)</p>
+            <p class="fragment fade-in visible">The memory addressed by a Pointer can be shared over many scopes</p>
+            <p class="fragment fade-in visible">The memory addressed by a Pointer is only collected once it falls out of all scopes</p>
           </section>
           <section>
             <h2>Making a Point</h2>
-            <p class="fragment fade-in visible">Important Fact: Anything you can create with <em>make</em>, is already a Reference</p>
+            <p class="fragment fade-in visible">Interesting Fact: Anything you <strong>can</strong> create with <em>make</em>, is automatically treated like a Pointer</p>
             <p class="fragment fade-in visible">... Even if you didn't use <em>make</em> to create it</a>
           </section>
           <section>
             <h2>Making a Point</h2>
             <iframe src="https://play.golang.org/p/s7mva95lnH" frameborder="0" style="width: 100%; height: 100%"><a href="https://play.golang.org/p/s7mva95lnH">see this code in play.golang.org</a></iframe>
+          </section>
+          <section>
+            <h2>Tips on using Pointers</h2>
+            <p class="fragment fade-in visible">Including everyones favorite question</p>
+          </section>
+          <section>
+            <h2>Receiving Pointers</h2>
+            <p class="fragment fade-in visible">Should I use a Pointer or a Value as a method receiver?</p>
+            <p class="fragment fade-in visible">Pointers, in most cases</p>
+            <p class="fragment fade-in visible">Typically, you want to be using Pointers where possible anyways</p>
+            <p class="fragment fade-in visible">Additionally, you want to watch out for "Accidental Copying" when not using Pointers</p>
           </section>
           <section>
             <h2>Interfacing</h2>
@@ -101,25 +103,24 @@
             <p class="fragment fade-in visible">That's because both <em>S</em> and <em>*S</em> adhere to the definition of MyInterface</p>
           </section>
           <section>
-            <h2>Receiving</h2>
-            <p class="fragment fade-in visible">The Big Question: Should I use a Pointer or a Value as a method receiver?</p>
-            <p class="fragment fade-in visible">Pointers, in most cases</p>
-            <p class="fragment fade-in visible">Typically, you want to be using pointers where possible anyways</p>
-            <p class="fragment fade-in visible">Additionally, you want to watch out for "Accidental Copying" when not using Pointers</p>
-            <p class="fragment fade-in visible">For more on "Accidental Copying", checkout: http://dave.cheney.net/2016/03/19/should-methods-be-declared-on-t-or-t</p>
+            <h2>Serializing</h2>
+            <p class="fragment fade-in visible">The most common mistake people make when serializing (ex: JSON)</p>
+            <p class="fragment fade-in visible">If a field of JSON can be null, you <strong>must</strong> declare it as a Pointer type</p>
+            <p class="fragment fade-in visible">Otherwise, Golang will fill missing data in with a value-based Zero Value</p>
+            <p class="fragment fade-in visible">There are similar concerns at play in other Serializations as well (ex: SQL)</p>
           </section>
           <section>
-            <h2>Aliasing Pointers</h2>
-            <p class="fragment fade-in visible">Technically, you can declare a type as pointer of an existing type</p>
+            <h2>Custom Pointer Types</h2>
+            <p class="fragment fade-in visible">Technically, you can declare a type as Pointer of an existing type</p>
             <p class="fragment fade-in visible">Example: <em>type PointS *S</em></p>
             <p class="fragment fade-in visible">Important note: With few exceptions, there is no type-aliasing in Golang. This is a brand new type</p>
             <p class="fragment fade-in visible">Should you declare types this way?</p>
             <p class="fragment fade-in visible">My <strong>opinion</strong> is probably not</p>
-            <p class="fragment fade-in visible">Using Pointers isn't hard, declaring a type as a pointer means more work to use it as a value, and is less clear to the reader</p>
+            <p class="fragment fade-in visible">Using Pointers isn't hard, declaring a type as a Pointer means more work to use it as a value, and is less clear to the reader</p>
           </section>
           <section>
             <h2>Pointing to Pointers</h2>
-            <p class="fragment fade-in visible">You can declare Pointers to Pointers!</p>
+            <p class="fragment fade-in visible">You can declare Pointers to Pointers</p>
             <p class="fragment fade-in visible">If you've shared a Pointer P to a particular value, and wish to change the memory address it points to, not the value inside the address...</p>
             <p class="fragment fade-in visible">You'd use a Pointer to a Pointer</p>
             <p class="fragment fade-in visible">This is because many concurrent users of the Pointer would have copies of it which still point to the original place in memory</p>
@@ -128,31 +129,32 @@
             <h2>Pointing to Pointers</h2>
             <p class="fragment fade-in visible">This means passing around Pointers is actually copying the Pointer (but not the value it points to)</p>
             <p class="fragment fade-in visible">A Pointer itself is actually a kind of (and passed by) value! (Remember my asterisk from before?)</p>
-            <p class="fragment fade-in visible">Therefore, passing around a Pointer to a Pointer lets you swap in different pointers simply</p>
+            <p class="fragment fade-in visible">Therefore, passing around a Pointer to a Pointer lets you swap in different Pointers simply</p>
             <p class="fragment fade-in visible">This, like other shared state, is not thread safe</p>
           </section>
           <section>
-            <h2>Quick Example 1 : Struct Pointers</h2>
+            <h2>Quick Example 1 : Structs</h2>
             <iframe src="https://play.golang.org/p/69TMwaMXz9" frameborder="0" style="width: 100%; height: 100%"><a href="https://play.golang.org/p/69TMwaMXz9">see this code in play.golang.org</a></iframe>
           </section>
           <section>
-            <h2>Quick Example 2 : Slice References 1</h2>
-            <iframe src="https://play.golang.org/p/m2rTAEhKB2" frameborder="0" style="width: 100%; height: 100%"><a href="https://play.golang.org/p/m2rTAEhKB2">see this code in play.golang.org</a></iframe>
+            <h2>Quick Example 2 : Slices</h2>
+            <iframe src="https://play.golang.org/p/zRBu4-DifG" frameborder="0" style="width: 100%; height: 100%"><a href="https://play.golang.org/p/zRBu4-DifG">see this code in play.golang.org</a></iframe>
           </section>
           <section>
-            <h2>Quick Example 3 : Slice References 2</h2>
-            <iframe src="https://play.golang.org/p/eR1We-Pbcf" frameborder="0" style="width: 100%; height: 100%"><a href="https://play.golang.org/p/eR1We-Pbcf">see this code in play.golang.org</a></iframe>
+            <h2>Quick Example 3 : More Slices</h2>
+            <iframe src="https://play.golang.org/p/mnLt3zk6G6" frameborder="0" style="width: 100%; height: 100%"><a href="https://play.golang.org/p/mnLt3zk6G6">see this code in play.golang.org</a></iframe>
           </section>
           <section>
-            <h2>Quick Example 4 : Slice References 3</h2>
-            <iframe src="https://play.golang.org/p/mOeYl-bcFn" frameborder="0" style="width: 100%; height: 100%"><a href="https://play.golang.org/p/mOeYl-bcFn">see this code in play.golang.org</a></iframe>
+            <h2>Quick Example 4 : Also Slices</h2>
+            <iframe src="https://play.golang.org/p/v4f8T-Lc0U" frameborder="0" style="width: 100%; height: 100%"><a href="https://play.golang.org/p/v4f8T-Lc0U">see this code in play.golang.org</a></iframe>
           </section>
           <section>
             <h2>Conclusion</h2>
             <p class="fragment fade-in visible">Pointers can be used mostly like regular variables</p>
             <p class="fragment fade-in visible">Go ahead and declare those method receivers on Pointer</p>
             <p class="fragment fade-in visible">You don't want to use Interfaces as Pointers, but using them with Pointers is fine</p>
-            <p class="fragment fade-in visible">Serializing data? Remember your pointers if fields can be null</p>
+            <p class="fragment fade-in visible">Serializing data? Remember your Pointers if fields can be null</p>
+            <p class="fragment fade-in visible">Sharing References == Sharing State == Threadsafety Concerns</p>
             <p class="fragment fade-in visible">Pointers to Pointers are a little heady, but very important when needed</p>
           </section>
           <section>
